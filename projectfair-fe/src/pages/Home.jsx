@@ -3,8 +3,18 @@ import { Row, Col } from 'react-bootstrap'
 import firstImage from '../assets/image1.png'
 import { Link } from 'react-router-dom'
 import ProjectCard from '../components/ProjectCard'
+import { getHomeProjectApi } from '../services/allApi'
 function Home() {
   const [isLogin, setIsLogin] = useState(false)
+  const [homeProject, setHomeProject] = useState([])
+  const getHomeProject = async () => {
+    const result = await getHomeProjectApi()
+    console.log("Home Project:", result)
+    setHomeProject(result.data)
+  }
+  useEffect(() => {
+    getHomeProject()
+  }, [])
   useEffect(() => {
     if (sessionStorage.getItem("token")) {
       setIsLogin(true)
@@ -19,12 +29,12 @@ function Home() {
               <h3 className='text-light'>PROJECT FAIR</h3>
               <h6>One stop destination for all software projects</h6>
               {
-                !isLogin?
-                <Link to={"/login"}><button className='btn btn-outline-light mt-3'>GET STARTED <i class="fa-solid fa-arrow-right ms-2"></i></button></Link>
-                :
-                <Link to={"/dashboard"}><button className='btn btn-outline-light mt-3'>MANAGE PROJECTS <i class="fa-solid fa-arrow-right ms-2"></i></button></Link>
+                !isLogin ?
+                  <Link to={"/login"}><button className='btn btn-outline-light mt-3'>GET STARTED <i class="fa-solid fa-arrow-right ms-2"></i></button></Link>
+                  :
+                  <Link to={"/dashboard"}><button className='btn btn-outline-light mt-3'>MANAGE PROJECTS <i class="fa-solid fa-arrow-right ms-2"></i></button></Link>
               }
-              
+
             </div>
           </Col>
           <Col md={6} lg={6}>
@@ -36,15 +46,16 @@ function Home() {
         <h3 className='text-center my-5'>EXPLORE YOUR PROJECTS</h3>
         <div className='row mb-5'>
           <marquee scrollAmount={10}>
-            <div className='col-md-5 col-lg-4 justify-content-center d-flex p-4'>
-              <ProjectCard />
-            </div><div className='col-md-5 col-lg-4 justify-content-center d-flex p-4'>
-              <ProjectCard />
+            <div className="row">
+            {
+              homeProject.length > 0 &&
+              homeProject.map(item => (
+                <div className='col-md-5 col-lg-4 justify-content-center d-flex p-4'>
+                  <ProjectCard projectData={item}/>
+                </div>
+              ))
+            }
             </div>
-            <div className='col-md-5 col-lg-4 justify-content-center d-flex p-4'>
-              <ProjectCard />
-            </div>
-
           </marquee>
           <Link to={'/project'} style={{ textDecoration: 'none' }}>
             <h5 className='text-center text-warning fw-bold my-5'>SEE MORE PROJECTS</h5>

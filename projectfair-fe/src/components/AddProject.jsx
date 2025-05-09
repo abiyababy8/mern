@@ -49,6 +49,17 @@ function AddProject() {
                 "Authorization": `Bearer ${token}`
             }
             const result = await addProjectApi(reqBody, reqHeader)
+            if (result.status == 201) {
+                toast.success(result.data)
+                handleClear()
+                handleClose()
+            }
+            else if (result.status == 406) {
+                toast.warning(`${title} already exists, please add a new project`)
+            }
+            else {
+                toast.error("Something happened !!!")
+            }
         }
     }
     const handleClear = () => {

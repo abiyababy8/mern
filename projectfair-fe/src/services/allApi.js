@@ -13,3 +13,15 @@ export const loginApi = async (data) => {
 export const addProjectApi= async(data,reqHeader)=>{
     return await commonApi('POST',`${base_url}/project/add`,data,reqHeader)
 }
+//get home project
+export const getHomeProjectApi=async()=>{
+    return await commonApi('GET',`${base_url}/project/homeproject`,"","")
+}
+//get all project
+export const getAllProjectApi=async(reqHeader)=>{
+    return await commonApi('GET',`${base_url}/project/allproject`,"",reqHeader)
+}
+//get user project
+export const getUserProjectApi=async(reqHeader)=>{
+    return await commonApi('GET',`${base_url}/project/userproject`,"",reqHeader)
+}

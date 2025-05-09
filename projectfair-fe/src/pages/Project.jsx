@@ -1,7 +1,24 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import ProjectCard from '../components/ProjectCard'
+import { getAllProjectApi } from '../services/allApi'
 
 function Project() {
+  const [allProject, setAllProject] = useState([])
+  const getAllProject = async () => {
+    if (sessionStorage.getItem('token')) {
+      const token = sessionStorage.getItem('token')
+      const header = {
+        'Content_Type': "application/json",
+        'Authorization': `Bearer ${token}`
+      }
+      const result = await getAllProjectApi(header)
+      console.log('All Project:', result)
+      setAllProject(result.data)
+    }
+  }
+  useEffect(() => {
+    getAllProject()
+  }, [])
   return (
     <>
       <div className='container-fluid'>
@@ -16,9 +33,16 @@ function Project() {
         <div className="col-md-4"></div>
       </div>
       <div className="row my-5 p-5">
-        <div className='col-md-4 p-3'>
-          <ProjectCard/>
-        </div>
+        {
+          allProject.length > 0 ?
+            allProject.map(item => (
+              <div className='col-md-4 p-3'>
+                <ProjectCard projectData={item} />
+              </div>
+            )) :
+            <p>NO PROJECT FOUND</p>
+        }
+
       </div>
 
     </>
