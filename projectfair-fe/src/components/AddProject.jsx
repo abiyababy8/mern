@@ -1,12 +1,16 @@
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { Modal, Button } from 'react-bootstrap'
 import { useState } from 'react'
 import { toast, ToastContainer } from 'react-toastify';
 import { addProjectApi } from '../services/allApi';
+import { addProjectResponseContext } from '../Context/ContextShare';
 
 function AddProject() {
     const [show, setShow] = useState(false);
     const [token, setToken] = useState("")
+    // import states created inside contextApi
+    // useContext() hook is used to access the contextApi
+    const { addProjectResponse, setAddProjectResponse } = useContext(addProjectResponseContext)
     const [projectDetails, setProjectDetails] = useState({
         title: "",
         language: "",
@@ -50,6 +54,7 @@ function AddProject() {
             }
             const result = await addProjectApi(reqBody, reqHeader)
             if (result.status == 201) {
+                setAddProjectResponse(result.data)
                 toast.success(result.data)
                 handleClear()
                 handleClose()
