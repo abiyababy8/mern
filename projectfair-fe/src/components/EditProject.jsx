@@ -1,20 +1,64 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Button, Modal } from 'react-bootstrap'
 import { useState } from 'react'
 import { base_url } from '../services/base_url';
+import { toast, ToastContainer } from 'react-toastify';
+import { updateProjectApi } from '../services/allApi';
+
 function EditProject({ project }) {
   const [show, setShow] = useState(false);
+  const [preview, setPreview] = useState("")
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   console.log("Edit project:", project)
   const [projectDetails, setProjectDetails] = useState({
+    id: project._id,
     title: project.title,
     language: project.language,
     githubLink: project.github,
     websiteLink: project.website,
     overview: project.overview,
-    projectImage: project.projectImage
+    projectImage: ""
   })
+  useEffect(() => {
+    if (projectDetails.projectImage) {
+      setPreview(URL.createObjectURL(projectDetails.projectImage))
+    }
+  }, [projectDetails.projectImage])
+  const handleUpdate = async () => {
+    console.log('Updated Project Details:', projectDetails)
+    const { id, title, language, githubLink, websiteLink, overview, projectImage } = projectDetails
+
+    if (!title || !language || !githubLink || !websiteLink || !overview) {
+      toast.warning("Please fill the form completely!!")
+    }
+    else {
+      // send data to backend
+      //here we have to send a file, so instead of sending as object, we are passing data as formdata
+      const reqBody = new FormData()
+      reqBody.append("title", title)
+      reqBody.append("language", language)
+      reqBody.append("githubLink", githubLink)
+      reqBody.append("websiteLink", websiteLink)
+      reqBody.append("overview", overview)
+      preview ? reqBody.append("projectImage", projectImage) : reqBody.append("projectImage", project.projectImage)
+      const token = sessionStorage.getItem("token")
+      if (preview) {
+        const reqHeader = {
+          "Content-Type": "multipart/form-data",
+          "Authorization": `Bearer ${token}`
+        }
+        const result = await updateProjectApi(id, reqBody, reqHeader)
+      }
+      else {
+        const reqHeader = {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        }
+        const result = await updateProjectApi(id, reqBody, reqHeader)
+      }
+    }
+  }
   return (
     <>
       <i className="fa-solid fa-pen-to-square ms-3 text-danger" onClick={handleShow}></i>
@@ -26,8 +70,8 @@ function EditProject({ project }) {
           <div className="row">
             <div className="col-md-6 mt-3">
               <label htmlFor="projectImg">
-                <input type="file" id='projectImg' style={{ display: 'none' }} />
-                <img src={`${base_url}/uploads/${projectDetails.projectImage}`} alt="" className='w-100' />
+                <input type="file" id='projectImg' style={{ display: 'none' }} onChange={(e) => setProjectDetails({ ...projectDetails, projectImage: e.target.files[0] })} />
+                <img src={preview ? preview : `${base_url}/uploads/${project.projectImage}`} alt="" className='w-100' />
               </label>
             </div>
             <div className="col-md-6">
@@ -43,11 +87,12 @@ function EditProject({ project }) {
           <Button variant="secondary" onClick={handleClose}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleClose}>
-            Edit Project
+          <Button variant="primary" onClick={handleUpdate}>
+            Update Project
           </Button>
         </Modal.Footer>
       </Modal>
+      <ToastContainer />
     </>
   )
 }
