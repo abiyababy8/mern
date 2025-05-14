@@ -51,18 +51,18 @@ function Auth({ registerPage }) {
     else {
       //call api to login the user
       const result = await loginApi(userData)
-      if(result.status==200){
-       sessionStorage.setItem("existingUser",JSON.stringify(result.data.user_data))
-       sessionStorage.setItem("token",result.data.jwt_token)
+      if (result.status == 200) {
+        sessionStorage.setItem("existingUser", JSON.stringify(result.data.user_data))
+        sessionStorage.setItem("token", result.data.jwt_token)
         toast.success("Login Successfull!")
         navigate('/')
       }
-      else if(result.status==406){
+      else if (result.status == 406) {
         toast.error("Invalid Email or Password!")
       }
-else{
-  toast.error("Something bad happened!")
-}
+      else {
+        toast.error("Something bad happened!")
+      }
     }
   }
   useEffect(() => {
