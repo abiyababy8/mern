@@ -14,6 +14,13 @@ router.post('/user/register', useController.registerUser)
 router.post('/user/login', useController.loginUser)
 //3.3) add project
 router.post('/project/add', jwtMiddleware, multerConfig.single('projectImage'), projectController.addProject)
-
+//3.4) get home projects
+router.get('/project/homeproject', projectController.getHomeProject)
+//3.5) get all projects
+router.get('/project/allproject', jwtMiddleware, projectController.getAllProject)
+//3.6) get user projects
+router.get('/project/userproject', jwtMiddleware, projectController.getUserProject)
+//3.7) update project
+router.put('/project/edit/:id',jwtMiddleware,multerConfig.single('projectImage'),projectController.updateUserProject)
 //4) export router
 module.exports = router;
