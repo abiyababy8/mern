@@ -29,3 +29,7 @@ export const getUserProjectApi = async (reqHeader) => {
 export const updateProjectApi = async (projectId, reqBody, reqHeader) => {
     return await commonApi('PUT', `${base_url}/project/edit/${projectId}`, reqBody, reqHeader)
 }
+//delete project
+export const deleteProjectApi = async (project_Id, reqHeader) => {
+    return await commonApi('DELETE', `${base_url}/project/delete/${project_Id}`, {}, reqHeader)
+}

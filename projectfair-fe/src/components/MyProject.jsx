@@ -2,12 +2,13 @@ import React, { useContext, useEffect, useState } from 'react'
 import AddProject from './AddProject'
 import { Link } from 'react-router-dom'
 import EditProject from './EditProject'
-import { getUserProjectApi } from '../services/allApi'
-import { addProjectResponseContext } from '../Context/ContextShare'
+import { deleteProjectApi, getUserProjectApi } from '../services/allApi'
+import { addProjectResponseContext, editProjectResponseContext } from '../Context/ContextShare'
 
 function MyProject() {
     const [userProject, setUserProject] = useState([])
     const { addProjectResponse, setAddProjectResponse } = useContext(addProjectResponseContext)
+    const { editProjectResponse, setEditProjectResponse } = useContext(editProjectResponseContext)
     const getUserProject = async () => {
         const token = sessionStorage.getItem("token")
         const requestHeader = {
@@ -20,7 +21,16 @@ function MyProject() {
     }
     useEffect(() => {
         getUserProject()
-    }, [addProjectResponse])
+    }, [addProjectResponse, editProjectResponse])
+    const handleDelete = async (projectId) => {
+        const token = sessionStorage.getItem("token")
+        const reqHeader = {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        }
+        const result = await deleteProjectApi(projectId, reqHeader)
+        
+    }
     return (
         <>
             <div className='shadow p-5 mb-5'>
@@ -37,8 +47,8 @@ function MyProject() {
                                     <div className='d-flex ms-auto align-items-center'>
                                         <Link to={item.github} target='_blank'><i className="fa-brands fa-github" style={{ color: 'blue' }}></i></Link>
                                         <Link to={item.website} target='_blank'><i className="fa-solid fa-link ms-3" style={{ color: 'blue' }}></i></Link>
-                                        <EditProject project={item}/>
-                                        <i className="fa-solid fa-trash ms-3" style={{ color: 'red' }}></i>
+                                        <EditProject project={item} />
+                                        <i className="fa-solid fa-trash ms-3" style={{ color: 'red' }} onClick={() => handleDelete(item._id)}></i>
                                     </div>
                                 </div>
                             )) :

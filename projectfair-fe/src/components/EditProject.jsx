@@ -1,14 +1,19 @@
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { Button, Modal } from 'react-bootstrap'
 import { useState } from 'react'
 import { base_url } from '../services/base_url';
 import { toast, ToastContainer } from 'react-toastify';
 import { updateProjectApi } from '../services/allApi';
+import { editProjectResponseContext } from '../Context/ContextShare';
 
 function EditProject({ project }) {
   const [show, setShow] = useState(false);
   const [preview, setPreview] = useState("")
-  const handleClose = () => setShow(false);
+  const { editProjectResponse, setEditProjectResponse } = useContext(editProjectResponseContext)
+  const handleClose = () => {
+    setShow(false)
+    resetForm()
+  };
   const handleShow = () => setShow(true);
   console.log("Edit project:", project)
   const [projectDetails, setProjectDetails] = useState({
@@ -25,6 +30,19 @@ function EditProject({ project }) {
       setPreview(URL.createObjectURL(projectDetails.projectImage))
     }
   }, [projectDetails.projectImage])
+  // to reset the user fields
+  const resetForm = () => {
+    setProjectDetails({
+      id: project._id,
+      title: project.title,
+      language: project.language,
+      githubLink: project.github,
+      websiteLink: project.website,
+      overview: project.overview,
+      projectImage: ""
+    })
+    setPreview("")
+  }
   const handleUpdate = async () => {
     console.log('Updated Project Details:', projectDetails)
     const { id, title, language, githubLink, websiteLink, overview, projectImage } = projectDetails
@@ -34,7 +52,7 @@ function EditProject({ project }) {
     }
     else {
       // send data to backend
-      //here we have to send a file, so instead of sending as object, we are passing data as formdata
+      // here we have to send a file, so instead of sending as object, we are passing data as formdata
       const reqBody = new FormData()
       reqBody.append("title", title)
       reqBody.append("language", language)
@@ -49,6 +67,15 @@ function EditProject({ project }) {
           "Authorization": `Bearer ${token}`
         }
         const result = await updateProjectApi(id, reqBody, reqHeader)
+        if (result.status === 200) {
+          setEditProjectResponse(result.data)
+          toast.success(`${title} updated successfully!`)
+          setShow(false)
+
+        }
+        else {
+          toast.error("Something Happened!")
+        }
       }
       else {
         const reqHeader = {
@@ -56,6 +83,15 @@ function EditProject({ project }) {
           "Authorization": `Bearer ${token}`
         }
         const result = await updateProjectApi(id, reqBody, reqHeader)
+        if (result.status === 200) {
+          setEditProjectResponse(result.data)
+          toast.success(`${title} updated successfully!`)
+          setShow(false)
+
+        }
+        else {
+          toast.error("Something Happened!")
+        }
       }
     }
   }
@@ -84,15 +120,16 @@ function EditProject({ project }) {
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Cancel
+          <Button variant="secondary" onClick={resetForm}>
+            Reset
           </Button>
           <Button variant="primary" onClick={handleUpdate}>
             Update Project
           </Button>
         </Modal.Footer>
       </Modal>
-      <ToastContainer />
+      <ToastContainer
+        autoClose={1000} />
     </>
   )
 }
