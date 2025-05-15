@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import EditProject from './EditProject'
 import { deleteProjectApi, getUserProjectApi } from '../services/allApi'
 import { addProjectResponseContext, editProjectResponseContext } from '../Context/ContextShare'
-
+import { toast, ToastContainer } from 'react-toastify'
 function MyProject() {
     const [userProject, setUserProject] = useState([])
     const { addProjectResponse, setAddProjectResponse } = useContext(addProjectResponseContext)
@@ -29,7 +29,15 @@ function MyProject() {
             "Authorization": `Bearer ${token}`
         }
         const result = await deleteProjectApi(projectId, reqHeader)
-        
+        if (result.status === 200) {
+            console.log("Delete Status:",result)
+            toast.success(`${result.data.title} deleted successfully!`)
+            getUserProject()
+            
+        }
+        else {
+            toast.error("Something Happened! Cannnot Delete!")
+        }
     }
     return (
         <>
@@ -48,7 +56,7 @@ function MyProject() {
                                         <Link to={item.github} target='_blank'><i className="fa-brands fa-github" style={{ color: 'blue' }}></i></Link>
                                         <Link to={item.website} target='_blank'><i className="fa-solid fa-link ms-3" style={{ color: 'blue' }}></i></Link>
                                         <EditProject project={item} />
-                                        <i className="fa-solid fa-trash ms-3" style={{ color: 'red' }} onClick={() => handleDelete(item._id)}></i>
+                                        <i className="fa-solid fa-trash ms-3" style={{ color: 'red', cursor: 'pointer' }} onClick={() => handleDelete(item._id)}></i>
                                     </div>
                                 </div>
                             )) :
@@ -56,6 +64,7 @@ function MyProject() {
                     }
                 </div>
             </div>
+            <ToastContainer autoClose={1000} />
         </>
     )
 }

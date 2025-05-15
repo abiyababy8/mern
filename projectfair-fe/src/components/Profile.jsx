@@ -2,6 +2,16 @@ import React, { useState } from 'react'
 import { Collapse } from 'react-bootstrap'
 function Profile() {
   const [open, setOpen] = useState(false);
+  // name, email, password; we already stored it in session storage
+  //create a state to store profile details
+  const [profile, setProfile] = useState({
+    name: "",
+    email: "",
+    password: "",
+    github: "",
+    linkedin: "",
+    profile: "",
+  })
   return (
     <>
       <div className='shadow p-4'>

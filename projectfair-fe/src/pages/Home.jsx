@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { Row, Col } from 'react-bootstrap'
 import firstImage from '../assets/image1.png'
 import { Link } from 'react-router-dom'
 import ProjectCard from '../components/ProjectCard'
 import { getHomeProjectApi } from '../services/allApi'
+import { isAuthTokenContext } from '../Context/ContextShare'
 function Home() {
   const [isLogin, setIsLogin] = useState(false)
   const [homeProject, setHomeProject] = useState([])
+  const { isAuthToken, setIsAuthToken } = useContext(isAuthTokenContext)
   const getHomeProject = async () => {
     const result = await getHomeProjectApi()
     console.log("Home Project:", result)
@@ -29,7 +31,7 @@ function Home() {
               <h3 className='text-light'>PROJECT FAIR</h3>
               <h6>One stop destination for all software projects</h6>
               {
-                !isLogin ?
+                !isAuthToken ?
                   <Link to={"/login"}><button className='btn btn-outline-light mt-3'>GET STARTED <i class="fa-solid fa-arrow-right ms-2"></i></button></Link>
                   :
                   <Link to={"/dashboard"}><button className='btn btn-outline-light mt-3'>MANAGE PROJECTS <i class="fa-solid fa-arrow-right ms-2"></i></button></Link>
@@ -47,14 +49,14 @@ function Home() {
         <div className='row mb-5'>
           <marquee scrollAmount={10}>
             <div className="row">
-            {
-              homeProject.length > 0 &&
-              homeProject.map(item => (
-                <div className='col-md-5 col-lg-4 justify-content-center d-flex p-4'>
-                  <ProjectCard projectData={item}/>
-                </div>
-              ))
-            }
+              {
+                homeProject.length > 0 &&
+                homeProject.map(item => (
+                  <div className='col-md-5 col-lg-4 justify-content-center d-flex p-4'>
+                    <ProjectCard projectData={item} />
+                  </div>
+                ))
+              }
             </div>
           </marquee>
           <Link to={'/project'} style={{ textDecoration: 'none' }}>

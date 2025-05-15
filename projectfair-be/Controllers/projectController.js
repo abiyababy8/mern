@@ -99,14 +99,25 @@ exports.updateUserProject = async (req, res) => {
             overview: overview,
             projectImage: uploadprojectimage,
             userId: userId
-        }, 
-        { 
-            new: true  //used to define update
-         })
-         await updateProject.save()
-         res.status(200).json(updateProject)
+        },
+            {
+                new: true  //used to define update
+            })
+        await updateProject.save()
+        res.status(200).json(updateProject)
     }
     catch (err) {
         res.status(401).json(err)
+    }
+}
+// delete user project
+exports.deleteProject = async (req, res) => {
+    const { id } = req.params
+    try {
+        const removeproject = await projects.findByIdAndDelete({ _id: id })
+        res.status(200).json(removeproject)
+    }
+    catch (error) {
+        res.status(401).json(error)
     }
 }

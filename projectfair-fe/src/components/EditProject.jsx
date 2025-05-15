@@ -97,7 +97,7 @@ function EditProject({ project }) {
   }
   return (
     <>
-      <i className="fa-solid fa-pen-to-square ms-3 text-danger" onClick={handleShow}></i>
+      <i className="fa-solid fa-pen-to-square ms-3 text-danger" style={{cursor:'pointer'}} onClick={handleShow}></i>
       <Modal show={show} onHide={handleClose} size='lg'>
         <Modal.Header closeButton>
           <Modal.Title className='text-success'>EDIT PROJECT</Modal.Title>

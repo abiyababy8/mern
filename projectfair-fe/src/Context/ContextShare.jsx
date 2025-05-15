@@ -3,6 +3,7 @@ import React, { createContext, useState } from 'react'
 //create a context
 export const addProjectResponseContext = createContext()
 export const editProjectResponseContext = createContext()
+export const isAuthTokenContext = createContext()
 
 function ContextShare({ children }) {
     //children is predefined props used to share data between all components
@@ -10,6 +11,7 @@ function ContextShare({ children }) {
     // create a state , that state is we are sharing between components
     const [addProjectResponse, setAddProjectResponse] = useState({})
     const [editProjectResponse, setEditProjectResponse] = useState({})
+    const [isAuthToken, setIsAuthToken] = useState(false)
 
     return (
         <>
@@ -19,7 +21,11 @@ function ContextShare({ children }) {
                 <editProjectResponseContext.Provider
                     value={{ editProjectResponse, setEditProjectResponse }}
                 >
-                    {children}
+                    <isAuthTokenContext.Provider
+                        value={{ isAuthToken, setIsAuthToken }}
+                    >
+                        {children}
+                    </isAuthTokenContext.Provider>
                 </editProjectResponseContext.Provider>
             </addProjectResponseContext.Provider>
 

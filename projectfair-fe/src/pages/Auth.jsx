@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Col, Row } from 'react-bootstrap'
 import { Link, useNavigate } from 'react-router-dom'
 import authImage from '../assets/image2.png'
 import { loginApi, registerApi } from '../services/allApi'
 import { ToastContainer, toast } from 'react-toastify';
+import { isAuthTokenContext } from '../Context/ContextShare'
 function Auth({ registerPage }) {
   const isRegisterPage = registerPage ? true : false
+  const { isAuthToken, setIsAuthToken } = useContext(isAuthTokenContext)
   // useNavigate() hook is used to navigate to another page
   const navigate = useNavigate()
   // create a state to hold all input values
@@ -54,6 +56,7 @@ function Auth({ registerPage }) {
       if (result.status == 200) {
         sessionStorage.setItem("existingUser", JSON.stringify(result.data.user_data))
         sessionStorage.setItem("token", result.data.jwt_token)
+        setIsAuthToken(true)
         toast.success("Login Successfull!")
         navigate('/')
       }
